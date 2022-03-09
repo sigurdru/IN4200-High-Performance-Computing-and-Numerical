@@ -1,2 +1,2 @@
-# IN4200-High-Performance-Computing-and-Numerical
-My work in IN4200 - High-Performance Computing and Numerical Projects fall 2022.
+# IN4200-High-Performance Computing
+My work in IN4200 - High-Performance Computing and Numerical Projects spring 2022.
