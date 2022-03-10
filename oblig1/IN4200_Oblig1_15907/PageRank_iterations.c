@@ -32,16 +32,16 @@ void PageRank_iterations(int N, int *row_ptr, int *col_idx,
     }
     floating_nodes = realloc(floating_nodes, Num_D*sizeof(int));
 
-    // Initialize scores and calculating barrier
+    // Initialize scores and finding barrier
     for (int i = 0; i<N; i++)
     {
         scores[i] = (double)1./ N;
     }
+    double barrier = scores[0];
 
     // Defining needed params
     double scalar = 0.;
     double W = 0.;
-    double barrier = scores[0];
     double MVM;
     double *old_scores = malloc(N*sizeof(double));
     for (int i = 0; i<N; i++)
@@ -50,19 +50,18 @@ void PageRank_iterations(int N, int *row_ptr, int *col_idx,
         W += scores[floating_nodes[i]];
 
     // Doing the actual algorithm
-    // printf("%f \n", W);
     while (barrier>epsilon)
     {
         scalar = (1 - d + d*W)/N;
-
+        scalar = 0.;
         for (int i = 0; i<N; i++)
         {
+            MVM = 0;
             for (int j = row_ptr[i]; j<row_ptr[i+1]; j++)
             {
                 MVM += val[j]*old_scores[col_idx[j]];
             }
             scores[i] = scalar + d * MVM;
-            MVM = 0;
         }
 
         for (int i = 0; i < Num_D; i++)
@@ -75,14 +74,13 @@ void PageRank_iterations(int N, int *row_ptr, int *col_idx,
                 barrier = fabs(old_scores[i] - scores[i]);
             old_scores[i] = scores[i];
         }
-        // printf("%f \n", barrier);
     }
     
     
-    for (int i = 0; i < N; i++)
-    {
-        printf("%f \n", scores[i]);
-    }
+    // for (int i = 0; i < N; i++)
+    // {
+    //     printf("%f \n", scores[i]);
+    // }
 
     free(old_scores);
     free(floating_nodes);

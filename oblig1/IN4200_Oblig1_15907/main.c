@@ -24,7 +24,9 @@ int main(int narg, char **argv)
     double *scores = calloc(N, sizeof(double));
     // Do algorithm
     PageRank_iterations(N, row_ptr, col_idx, val, d, epsilon, scores);
-
+    // Print top n webpages
+    int n = 3;
+    top_n_webpages(N, scores, n);
 
     free(row_ptr);
     free(col_idx);
