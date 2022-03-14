@@ -16,7 +16,7 @@ int main(int narg, char **argv)
     double *val;
     int N = 0;
     char *filename = argv[1];
-    double d = 1;
+    double d = 0.85;
     double epsilon = 0.000001;
 
     // Read from file and store data
