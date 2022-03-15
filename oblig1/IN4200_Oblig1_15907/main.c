@@ -16,7 +16,8 @@ int main(int narg, char **argv)
     double *val;
     int N = 0;
     char *filename = argv[1];
-    double d = 0.85;
+    double d = 1.;
+    // double d = 0.85;
     double epsilon = 0.000001;
 
     // Read from file and store data
@@ -25,7 +26,7 @@ int main(int narg, char **argv)
     // Do algorithm
     PageRank_iterations(N, row_ptr, col_idx, val, d, epsilon, scores);
     // Print top n webpages
-    int n = 3;
+    int n = 8;
     top_n_webpages(N, scores, n);
 
     free(row_ptr);
