@@ -1,5 +1,5 @@
 # IN4200 Oblig1 15907
-This README includes a description of code structure and how to run the code.
+This README includes a description of how to compile and run the code and a file breakdown.
 
 # How to run the code
  
@@ -7,7 +7,7 @@ First compile the program with
 ```
 make compile
 ``` 
-this will produce an executable file `run.exe`. In order to execute this file you have to provide it with the filename of a file containing a web graph, a damping constant, convergence threashold value and number of top websites you want displayed.
+this will produce an executable file `run.exe`. In order to execute this file you have to provide it with the filename of a web graph, damping constant (d), convergence threashold value ($\epsilon$) and number of top websites you want displayed (n).
 ```
 ./run.exe simple-webgraph.txt 1. 0.000001 3
 ```
