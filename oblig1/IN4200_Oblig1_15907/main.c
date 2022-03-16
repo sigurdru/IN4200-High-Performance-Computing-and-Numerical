@@ -39,5 +39,5 @@ int main(int narg, char **argv)
     free(col_idx);
     free(scores);
     free(val);
-     return 0;
+    return 0;
 }   
