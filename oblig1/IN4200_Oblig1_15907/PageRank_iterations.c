@@ -57,9 +57,7 @@ void PageRank_iterations(int N, int *row_ptr, int *col_idx,
 
     // Doing the actual algorithm
     while (barrier>epsilon)
-    // for (int l = 0; l<4; l++)
     {   
-        // printf("run %d \n", l);
         scalar = (1 - d + d*W)/N;
         W = 0.;
         barrier = 0.;
@@ -85,16 +83,7 @@ void PageRank_iterations(int N, int *row_ptr, int *col_idx,
             if (fabs(old_scores[i] - scores[i]) > barrier)
                 barrier = fabs(old_scores[i] - scores[i]);
         }
-        // for(i = 0; i < N; i++)
-        // {
-        //     printf("%f \n", scores[i]);
-        // }
     }
-    for (i = 0; i < N; i++)
-    {
-        printf("%f \n", scores[i]);
-    }
-
 
     free(old_scores);
     free(floating_nodes);

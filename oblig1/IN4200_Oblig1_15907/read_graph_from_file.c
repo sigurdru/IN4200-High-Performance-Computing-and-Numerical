@@ -91,7 +91,8 @@ void read_graph_from_file(char *filename, int *N, int **row_ptr,
                     (*col_idx)[j] = (*col_idx)[k];
                     (*val)[j] = (*val)[k]; 
                     (*col_idx)[k] = temp_col;
-                    (*val)[k] = temp_val;                }
+                    (*val)[k] = temp_val;                
+                }
             }
         }
     }
