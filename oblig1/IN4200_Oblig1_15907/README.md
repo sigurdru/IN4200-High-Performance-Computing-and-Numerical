@@ -7,7 +7,7 @@ First compile the program with
 ```
 make compile
 ``` 
-this will produce an executable file `run.exe`. In order to execute this file you have to provide it with the filename of a web graph, damping constant (d), convergence threashold value ($\epsilon$) and number of top websites you want displayed (n).
+this will produce an executable file `run.exe`. In order to execute this file you have to provide it with the filename of a web graph, damping constant (d), convergence threashold value ($`\epsilon`$) and number of top websites you want displayed (n).
 ```
 ./run.exe simple-webgraph.txt 1. 0.000001 3
 ```
