@@ -1,6 +1,17 @@
-compile:
-	gcc -o run.exe -Wall -lm -fopenmp main.c read_graph_from_file.c PageRank_iterations.c top_n_webpages.c
-simple-webgraph:
-	./run.exe simple-webgraph.txt 1. 0.000001 3
-100nodes_graph:
-	./run.exe 100nodes_graph.txt 0.85 0.000001 10
+MPICC = mpicc
+CFLAGS = -O2
+
+LDFLAGS = -L../../simple-jpeg/ -lsimplejpeg
+
+PROJ = parallel_main
+
+all: simple-jpeg $(PROJ)
+
+parallel_main: parallel_main.c functions.c
+	$(MPICC) $(CFLAGS) -o $@ parallel_main.c functions.c $(LDFLAGS) 
+
+simple-jpeg:
+	$(MAKE) -C ../../simple-jpeg
+
+run:
+	./parallel_main 0.2 50 ../mona_lisa_noisy.jpg ../mona_lisa_parallel.jpg

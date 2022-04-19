@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
         printf("- iters [int] (damping constant)\n");
         printf("- input_jpeg_filename [char] (input jpeg filename with destination)\n");
         printf("- output_jpeg_filename [char] (output jpeg filename with destination)\n");
-        printf("Example: ./serial.main 0.2 1000 ../mona_lisa_noisy.jpg ../mona_lisa.jpg \n");
+        printf("Example: ./serial_main 0.2 50 ../mona_lisa_noisy.jpg ../mona_lisa.jpg \n");
 
         exit(0);
     }
