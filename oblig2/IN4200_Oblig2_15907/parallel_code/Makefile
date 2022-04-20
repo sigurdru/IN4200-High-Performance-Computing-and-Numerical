@@ -14,4 +14,4 @@ simple-jpeg:
 	$(MAKE) -C ../../simple-jpeg
 
 run:
-	./parallel_main 0.2 50 ../mona_lisa_noisy.jpg ../mona_lisa_parallel.jpg
+	mpirun -np 4 ./parallel_main 0.2 50 ../mona_lisa_noisy.jpg ../mona_lisa_parallel.jpg

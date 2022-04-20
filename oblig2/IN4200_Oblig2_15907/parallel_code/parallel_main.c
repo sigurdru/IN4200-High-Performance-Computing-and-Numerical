@@ -38,10 +38,11 @@ int main(int argc, char *argv[])
             printf("- iters [int] (damping constant)\n");
             printf("- input_jpeg_filename [char] (input jpeg filename with destination)\n");
             printf("- output_jpeg_filename [char] (output jpeg filename with destination)\n");
-            printf("Example: ./parallel_main 0.2 1000 ../mona_lisa_noisy.jpg ../mona_lisa.jpg \n");
+            printf("Example: mpirun -np 4 ./parallel_main 0.2 50 ../mona_lisa_noisy.jpg ../mona_lisa_parallel.jpg \n");
 
             exit(0);
-        } 
+        }
+        printf("Number of cores: %d\n", num_procs);
         kappa = atof(argv[1]);
         iters = atoi(argv[2]);
         input_jpeg_filename = argv[3];
@@ -54,31 +55,80 @@ int main(int argc, char *argv[])
     {
         import_JPEG_file(input_jpeg_filename, &image_chars, &m, &n, &c);
         allocate_image(&whole_image, m, n);
+        printf("Succeeded! vertical pixels: %d, horizontal pixels: %d, num components: %d\n",
+               m, n, c);
     }
     MPI_Bcast(&m, 1, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(&n, 1, MPI_INT, 0, MPI_COMM_WORLD);
     // /* 2D decomposition of the m x n pixels evenly among the MPI processes */
-    // my_m = ...;
-    // my_n = ...;
-    // allocate_image(&u, my_m, my_n);
-    // allocate_image(&u_bar, my_m, my_n);
     // /* each process asks process 0 for a partitioned region */
     // /* of image_chars and copy the values into u */
-    // /* ... */
-    // convert_jpeg_to_image(my_image_chars, &u);
-    // iso_diffusion_denoising_parallel(&u, &u_bar, kappa, iters);
+    int rows = m / num_procs;
+    int remainder = m % num_procs;
+    int *n_rows = malloc(num_procs * sizeof(*n_rows));
+    int *sendcounts = malloc(num_procs * sizeof(*sendcounts));
+    int *displs = malloc(num_procs * sizeof(*displs));
+    displs[0] = 0;
+    for (int i = 0; i < num_procs - 1; i++)
+    {
+        n_rows[i] = rows + ((i >= (num_procs - remainder)) ? 1 : 0);
+        sendcounts[i] = n_rows[i] * n;
+        displs[i + 1] = displs[i] + n_rows[i];
+    }
+    n_rows[num_procs - 1] = rows + ((num_procs)-1 >= (num_procs - remainder) ? 1 : 0);
+    sendcounts[num_procs - 1] = n_rows[num_procs - 1] * n;
+    my_m = n_rows[my_rank];
+    my_n = n;
+    allocate_image(&u, my_m, my_n);
+    allocate_image(&u_bar, my_m, my_n);
+    my_image_chars = malloc(n * n_rows[my_rank] * sizeof(*my_image_chars));
+
+    MPI_Scatterv(image_chars,
+                 sendcounts,
+                 displs,
+                 MPI_UNSIGNED_CHAR,
+                 my_image_chars,
+                 n*n_rows[my_rank],
+                 MPI_UNSIGNED_CHAR,
+                 0,
+                 MPI_COMM_WORLD);
+
+    convert_jpeg_to_image(my_image_chars, &u);
+    iso_diffusion_denoising_parallel(&u, &u_bar, kappa, iters);
     // /* each process sends its resulting content of u_bar to process 0 */
     // /* process 0 receives from each process incoming values and */
     // /* copy them into the designated region of struct whole_image */
-    // /* ... */
+    MPI_Gatherv(my_image_chars,
+                sendcounts[my_rank],
+                MPI_UNSIGNED_CHAR,
+                image_chars,
+                sendcounts,
+                displs,
+                MPI_UNSIGNED_CHAR,
+                0,
+                MPI_COMM_WORLD);
     if (my_rank == 0)
     {
-        convert_image_to_jpeg(&whole_image, image_chars);
+        // convert_image_to_jpeg(&whole_image, image_chars);
         export_JPEG_file(output_jpeg_filename, image_chars, m, n, c, 75);
         deallocate_image(&whole_image);
     }
-    // deallocate_image(&u);
-    // deallocate_image(&u_bar);
+    deallocate_image(&u);
+    deallocate_image(&u_bar);
+    free(sendcounts);
+    free(displs);
+    free(n_rows);
+    free(my_image_chars);
     MPI_Finalize();
     return 0;
+    // if (my_rank == 0)
+    // {
+    //     for (int i = 0; i < num_procs; i++)
+    //     {
+    //         printf("%d\n", n_rows[i]);
+    //         printf("%d\n", sendcounts[i]);
+    //         printf("%d\n", displs[i]);
+    //         printf("%d\n", n*n_rows[i]);
+    //     }
+    // }
 }
