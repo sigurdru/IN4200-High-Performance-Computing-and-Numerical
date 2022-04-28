@@ -79,9 +79,11 @@ void PageRank_iterations(int N, int *row_ptr, int *col_idx,
         #pragma omp parallel for
         for (i = 0; i < N; i++)
         {
-            old_scores[i] = scores[i];
             if (fabs(old_scores[i] - scores[i]) > barrier)
+            {
                 barrier = fabs(old_scores[i] - scores[i]);
+            }
+            old_scores[i] = scores[i];
         }
     }
 
